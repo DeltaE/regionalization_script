@@ -33,13 +33,102 @@ from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.formatting.rule import ColorScaleRule
 import re
 from string import digits
+import csv
 
+####################################
+# ask user functions
+####################################
+
+def y_or_n(question):
+    while True:
+        ans = input(question)
+        if ans in ('y', 'Y', 'n', 'N'):
+            break
+    
+    if ans == 'y' or ans == 'Y':
+        return True 
+   
+    if ans == 'n' or ans == 'N':
+        return False
+
+
+def answer(question):
+	check = '' 
+    while check not in ('y', 'Y'):
+        ans = input(question)
+        check = input('Please confirm your answer: "' + ans + '" (y/n)')
+    return ans
+
+def print_regions(regions):
+    print("The following are your current regions")
+    print("++++++++++regions:++++++++++")
+    for num in regions:
+        print(num, ':', regions[num])
+
+def print_menu(regions):
+    print("++++++++++menu:++++++++++")
+    print("   option '1': regions are all correct, proceed")
+    print("   option '2': add regions")
+    print("   option '3': remove regions")
+
+def choose_option(regions):
+	print_regions(regions)
+	print_menu(regions)
+	
+	option = ''
+	while check not in ('1', '2', '3'):
+		option = input("Please enter integer of your choice")
+
+    option = int(option)
+    return option
+
+def add_regions(regions):
+    print_regions(regions)
+    while finished not in ('f', 'F'):
+
+
+
+def remove_regions(regions):
+    print_regions(regions)
+    while num not in regions:
+        num = int(input("please enter region number, must be integer"))
+
+
+def sort_regions(regions):
+    if regions == []:
+        add_regions(regions)
+	
+    option = choose_option(regions)
+    if option == 2:
+	   add_regions(regions)
+       sort_regions(regions)
+    if option == 3:
+	   remove_regions(regions)
+       sort_regions(regions)
+    
+    finished = ''
+	while finished not in ('y', 'Y'):
+		finished = input("all regions are correct (y/n)")
+
+    if finished in ('n', 'N'):
+        sort_regions
+
+    return
 ####################################
 # user defined variables
 ####################################
 
-xlFilename = "individualRegionFiles.xlsx" # enter filename here
-save_file_name = "regionalized_map.xlsx"  # enter filename to save map 
+xlFilename = answer("enter input excel filename here")
+
+save_csv_names = {
+    'map'       :'map.csv',
+    'legend'    :'legend.csv',
+    'overlaps'  :'overlaps.csv'
+}
+
+format_map = y_or_n("Should map be formatted and saved as worksheet (y/n)")
+save_wb_name = input("enter input filename here")
+"regionalized_map.xlsx"  # enter filename to save map 
                                           # (must be different than xlFile name)
 col_width = 3 # enter width of column of map
 
@@ -57,20 +146,21 @@ area_name = "CAN" # enter combined region name here
 
 # note: the region number will determine the number of region in final map
 regions = { 
-    1   :"AB",
-    2   :"BC",
-    3   :"MB",
-    4   :"NB",
-    5   :"NL",
-    6   :"NT",
-    7   :"NS",
-    8   :"NU",
-    9   :"ON",
-    10  :"PE",
-    11  :"QC",
-    12  :"SK",
-    13  :"YT"
+    # 1   :"AB",
+    # 2   :"BC",
+    # 3   :"MB",
+    # 4   :"NB",
+    # 5   :"NL",
+    # 6   :"NT",
+    # 7   :"NS",
+    # 8   :"NU",
+    # 9   :"ON",
+    # 10  :"PE",
+    # 11  :"QC",
+    # 12  :"SK",
+    # 13  :"YT"
 } # enter regions to be clustered here
+sort_regions(regions)
 
 # global variables
 num_extra_top_rows = 6 # the top of every asc file has 6 extra rows
@@ -200,9 +290,9 @@ def set_cells_to_num_except_blanks(map_ws, region_ws, region_header, region_cell
                 map_ws_current_val = map_ws.cell(row=map_ws_current_row, 
                                     column=map_ws_current_col).value
 
-                if (cell_val != nodata_value) and (cell_val != "") and (cell_val != None):
+                if cell_val not in (nodata_value, None, ""):
                     # check to see if there will be overlap
-                    if (map_ws_current_val != None) and (map_ws_current_val != ""):
+                    if map_ws_current_val not in (None, ""):
                         add_overlap(overlaps, map_ws_current_row, map_ws_current_col)
 
                     # change value on map_ws
@@ -296,10 +386,12 @@ def format_map_ws(map_ws, area_ws, area_header, area_cell_info):
     set_headers_equal(map_ws, area_ws)
     # set to nodata value (of area) if blank
     set_blanks_to_nodata(map_ws, area_header, area_cell_info)
-    # set column width
-    set_column_width(map_ws)
-    # conditional format cells
-    set_color_scale(map_ws, area_header, area_cell_info)
+
+    if format_map == True:
+        # set column width
+        set_column_width(map_ws)
+        # conditional format cells
+        set_color_scale(map_ws, area_header, area_cell_info)
 
 # this function prints the region names and numbers into legend_ws
 def create_legend(legend_ws):
@@ -327,17 +419,32 @@ def print_overlaps(overlaps_ws, overlaps):
         overlaps_ws.cell(row=row, column=col).value = cell
 
 # this function saves the sheets 'map' and 'legend' and 'overlaps' into new workbook
-def save_workbook(wb, save_file_name):
-    # save only sheet 'map' and 'legend' by removing other sheets
+def save_files(wb, save_file_name):
+    
+    # save sheets into csv file
+    # using code inspired by https://stackoverflow.com/a/10803229
+    save_sheets = ['map', 'legend', 'overlaps']
+    for ws_name in save_sheets:
+        print("Now saving " + ws_name + " to: " + ws_name + ".csv")
+
+        with open(ws_name + '.csv','w', newline='') as file:
+            writer = csv.writer(file)
+            for row in wb[ws_name].rows:
+                writer.writerow([cell.value for cell in row])
+    
+    # save only sheet 'map' by removing other sheets
     # code copied from https://stackoverflow.com/a/46237894
     sheets = wb.sheetnames
     for ws_name in sheets:
-        if (ws_name != 'map') and (ws_name != 'legend') and (ws_name != 'overlaps'):
+        if (ws_name != 'map'):
             wb.remove(wb[ws_name])
 
-    print("Now saving map to workbook: " + save_file_name)
+    print("Now saving formatted map to workbook: " + save_file_name)
     wb.save(save_file_name)
-    print("Now saved to workbook: " + save_file_name)
+    print("Everything has been saved")
+
+    
+
 
 ####################################
 # main script
@@ -373,7 +480,7 @@ def main():
     print_overlaps(overlaps_ws, overlaps)
 
     # save workbook
-    save_workbook(wb, save_file_name)
+    save_files(wb, save_file_name)
     
     return
 
