@@ -41,23 +41,23 @@ import csv
 
 def y_or_n(question):
     while True:
-        ans = input(question)
-        if ans in ('y', 'Y', 'n', 'N'):
-            break
-    
-    if ans == 'y' or ans == 'Y':
-        return True 
-   
-    if ans == 'n' or ans == 'N':
-        return False
+        ans = input(question + " (y/n): ")
+        if ans in ('y', 'Y'):
+            return True
+        elif ans in ('n', 'N'):
+            return False
+        else:
+            print("Your answer '" + ans + "' was invalid.", "Please choose 'y' or 'n'.")
 
 
 def answer(question):
-	check = '' 
-    while check not in ('y', 'Y'):
-        ans = input(question)
-        check = input('Please confirm your answer: "' + ans + '" (y/n)')
-    return ans
+    while True:
+        ans = input(question + ": ")
+        check = input('Please confirm your answer: "' + ans + '" (y/n): ')
+        if check in ('y', 'Y'):
+            return ans
+        else:
+            print("Answer was not confirmed. Please enter answer again.") 
 
 def print_regions(regions):
     print("The following are your current regions")
@@ -76,11 +76,13 @@ def choose_option(regions):
 	print_menu(regions)
 	
 	option = ''
-	while check not in ('1', '2', '3'):
-		option = input("Please enter integer of your choice")
-
-    option = int(option)
-    return option
+	while True:
+       	option = input("Please enter integer of your choice: ")
+        if option in ('1', '2', '3'):
+            option = int(option)
+            return option
+        else:
+            print("Your input '" + option + "' was invalid.", "Please choose '1', '2', or '3'.")
 
 def add_regions(regions):
     print_regions(regions)
@@ -90,8 +92,17 @@ def add_regions(regions):
 
 def remove_regions(regions):
     print_regions(regions)
-    while num not in regions:
-        num = int(input("please enter region number, must be integer"))
+    while True:
+        num = int(input("Please enter the region number (integer) to delete: "))
+        if num in regions:
+            del regions[num]
+            print_regions(regions)
+            finished = y_or_n("Are you finished removing regions?")
+        else:
+            print("Your input '" + option + "' was invalid.", "Please choose again.")
+
+        
+
 
 
 def sort_regions(regions):
@@ -126,9 +137,9 @@ save_csv_names = {
     'overlaps'  :'overlaps.csv'
 }
 
-format_map = y_or_n("Should map be formatted and saved as worksheet (y/n)")
-save_wb_name = input("enter input filename here")
-"regionalized_map.xlsx"  # enter filename to save map 
+format_map = y_or_n("Should map be formatted and also saved as an excel workbook")
+save_wb_name = answer("Enter output workbook filename here")
+# "regionalized_map.xlsx"  # enter filename to save map 
                                           # (must be different than xlFile name)
 col_width = 3 # enter width of column of map
 
