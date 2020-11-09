@@ -7,7 +7,7 @@ This file takes in an excel workbook and produces a regionalized map
 
 Input:
 Before beginning, input excel file must have the following:
-    Sheet1 = "[area]"                    --> ex. CAN for canada, copy paste the .asc file
+    Sheet1 = "[area]"              --> ex. CAN for canada, copy paste the .asc file
     Others = "[abbreviation/name]" --> copy pasted .asc file 
 
 Output:
@@ -59,25 +59,31 @@ def answer(question):
         else:
             print("Answer was not confirmed. Please enter answer again.") 
 
+def print_dict(dc):
+    for key in dc:
+        print(key, ':', dc[key])
+
 def print_regions(regions):
+    if regions == {}:
+        return
     print("The following are your current regions")
-    print("++++++++++regions:++++++++++")
-    for num in regions:
-        print(num, ':', regions[num])
+    print("-----------------------\n","    regions:    ", "\n-----------------------")
+    print_dict(regions)
+    return
 
 def print_menu(regions):
-    print("++++++++++menu:++++++++++")
-    print("   option '1': regions are all correct, proceed")
-    print("   option '2': add regions")
-    print("   option '3': remove regions")
+    print("-----------------------\n","    menu:    ", "\n-----------------------")
+    print("   option 1: add regions")
+    print("   option 2: remove regions")
+    print("   option 3: finished editing regions")
+
 
 def choose_option(regions):
-	print_regions(regions)
-	print_menu(regions)
-	
-	option = ''
-	while True:
-       	option = input("Please enter integer of your choice: ")
+    print_regions(regions)
+    print_menu(regions)
+    
+    while True:
+        option = input("Please enter menu option of your choice (integer): ")
         if option in ('1', '2', '3'):
             option = int(option)
             return option
@@ -86,104 +92,175 @@ def choose_option(regions):
 
 def add_regions(regions):
     print_regions(regions)
-    while finished not in ('f', 'F'):
+    while True:
+        try:
+            num = int(input("Please enter the region number (integer): "))
+        except ValueError:
+            print("Your input was not an integer. Try again")
+            continue
+        name = input("Please enter region name (must be same as excel sheet): ")
+        if num in regions:
+            overwrite = y_or_n("There is already a region with that number. Would you like to overwrite it?")
+            if not overwrite:
+                continue
 
+        regions[num] = name
+        print_regions(regions)
+        finished = y_or_n("Would you like to add another region?")
+        if not finished:
+            return
 
 
 def remove_regions(regions):
     print_regions(regions)
     while True:
-        num = int(input("Please enter the region number (integer) to delete: "))
+        try:
+            num = int(input("Please enter the region number (integer) to delete: "))
+        except ValueError:
+            print("Your input was not an integer. Try again")
+            continue
         if num in regions:
             del regions[num]
             print_regions(regions)
-            finished = y_or_n("Are you finished removing regions?")
+            finished = y_or_n("Would you like to remove another region?")
+            if not finished:
+                return
         else:
-            print("Your input '" + option + "' was invalid.", "Please choose again.")
+            print("Your input '" + num + "' is not a region.", "Please choose again.")
 
         
 
-
-
 def sort_regions(regions):
-    if regions == []:
-        add_regions(regions)
-	
-    option = choose_option(regions)
-    if option == 2:
-	   add_regions(regions)
-       sort_regions(regions)
-    if option == 3:
-	   remove_regions(regions)
-       sort_regions(regions)
+    print("Use this to add or remove regions")
+    while True:
+        option = choose_option(regions)
+        if option == 1:
+           add_regions(regions)
+           continue
+        elif option == 2:
+           remove_regions(regions)
+           continue
+        # check if finished, then return
+        elif option == 3:
+            while True:
+                finished = y_or_n("Please confirm. Are all regions correct?")
+                if finished:
+                    return
+                else:
+                    break
+
+def change_csv_names(save_csv_names):
+    while True:
+        change = input("which file name would you like to change? ('map', 'legend', or 'region')")
+        if change in ('map', "'map'", '"map"'):
+            save_csv_names['map'] = answer("What would you like to change the saved file name for '" + change + "' to?")
+        elif change in ('legend', "'legend'", '"legend"'):
+            save_csv_names['legend'] = answer("What would you like to change the saved file name for '" + change + "' to?")
+        elif change in ('region', "'region'", '"region"'):
+            save_csv_names['region'] = answer("What would you like to change the saved file name for '" + change + "' to?")
+
+        print_dict(save_csv_names)
+        another = y_or_n("Would you like to change another filename?")
+        if not another:
+            return
+
+def print_explain_csv(save_csv_names):
+    print("These are the csv file names that the corresponding information will be saved to.") 
+    print_dict(save_csv_names)
+    print("\n")
+    print("'map' is the regionalized map")
+    print("'legend' is the list of regions and their corresponding numbers")
+    print("'overlaps' is the list of cells that have an overlap of regions")
+    print("***Please note that this program will overwrite existing files.***")
+
+####################################
+# defining global variables
+####################################
+
+def define_variable(variable_name):
+    if variable_name == "xlFilename":
+        print("\n==================== input excel file name ====================")
+        xlFilename = "individualRegionFiles.xlsx"
+        print('The current input excel file name is "' + xlFilename +'".')
+        change = y_or_n("Would you like to change the input file name")
+        if change:
+            xlFilename = answer("Please enter input excel filename")
+        return xlFilename
     
-    finished = ''
-	while finished not in ('y', 'Y'):
-		finished = input("all regions are correct (y/n)")
+    elif variable_name == "area_name":
+        print("\n==================== area name ====================")
+        area_name = answer("Please enter the name of the entire area here (must match the excel sheet name)")
+        return area_name
+    
+    elif variable_name == "regions":
+        regions = {}
+        print("\n==================== regions ====================")
+        print("Define region names (region names should be the same as excel sheet names)")
+        sort_regions(regions)
+        return regions
+    
+    elif variable_name == "save_csv_names":
+        print("\n==================== csv file names ====================")
+        save_csv_names = {
+            'map'       :'map.csv',
+            'legend'    :'legend.csv',
+            'overlaps'  :'overlaps.csv'
+        }
+        print_explain_csv(save_csv_names)
+        change = y_or_n("Would you like to change csv names")
+        if change:
+            change_csv_names(save_csv_names)
+        return save_csv_names
 
-    if finished in ('n', 'N'):
-        sort_regions
+    elif variable_name == "save_wb_name":
+        print("\n==================== output excel workbook name ====================")
+        save_wb_name = "regionalized_map.xlsx"
+        print('The current input excel file name is "' + save_wb_name +'".')
+        change = y_or_n("Would you like to change the output workbook file name?")
+        if change:
+            save_wb_name = answer("Please enter output workbook filename (must be different than input name)")
+        return save_wb_name
+    
+    else:
+        print("problem: variable name does not exist")
+        return('')
 
-    return
+
+
+
+
+
 ####################################
-# user defined variables
-####################################
-
-xlFilename = answer("enter input excel filename here")
-
-save_csv_names = {
-    'map'       :'map.csv',
-    'legend'    :'legend.csv',
-    'overlaps'  :'overlaps.csv'
-}
-
-format_map = y_or_n("Should map be formatted and also saved as an excel workbook")
-save_wb_name = answer("Enter output workbook filename here")
-# "regionalized_map.xlsx"  # enter filename to save map 
-                                          # (must be different than xlFile name)
-col_width = 3 # enter width of column of map
-
-# the following is for the color scale of the final product
-color_start_value = 00 # percentage (between 0-100)
-color_start_value_color = 'FFAA0000' 
-color_mid_value = 70 # percentage (between 0-100)
-color_mid_value_color = 'FFAAAA00'
-color_end_value = 100 # percentage (between 0-100)
-color_end_value_color = 'FF00AA00'
-
-
-# define area, region number and names (must match excel sheet names)
-area_name = "CAN" # enter combined region name here
-
-# note: the region number will determine the number of region in final map
-regions = { 
-    # 1   :"AB",
-    # 2   :"BC",
-    # 3   :"MB",
-    # 4   :"NB",
-    # 5   :"NL",
-    # 6   :"NT",
-    # 7   :"NS",
-    # 8   :"NU",
-    # 9   :"ON",
-    # 10  :"PE",
-    # 11  :"QC",
-    # 12  :"SK",
-    # 13  :"YT"
-} # enter regions to be clustered here
-sort_regions(regions)
-
 # global variables
+####################################
+
+xlFilename = define_variable("xlFilename")
+area_name = define_variable("area_name")
+regions = define_variable("regions")
+save_csv_names = define_variable("save_csv_names")
+
+format_map = y_or_n("Should the regionalized map be formatted and also saved as an excel workbook?")
+if format_map:
+    save_wb_name = define_variable("save_wb_name")
+
 num_extra_top_rows = 6 # the top of every asc file has 6 extra rows
 num_extra_left_cols = 1 # the left of every asc file has 1 extra column
+
+
+
+
+
+
+
 
 ####################################
 # functions
 ####################################
 
 def load_input_workbook():
-    if xlFilename == save_file_name:
-        sys.exit('ERROR: filename to save to cannot be the same as original workbook')
+    if format_map:
+        if xlFilename == save_wb_name:
+            sys.exit('ERROR: filename to save to cannot be the same as original workbook')
 
     print("Now loading workbook: " + xlFilename)
     wb = load_workbook(xlFilename)
@@ -365,6 +442,7 @@ def set_blanks_to_nodata(map_ws, area_header, area_cell_info):
 # this function sets column_width to user-defined variable
 # taken from https://stackoverflow.com/a/60801712
 def set_column_width(map_ws):
+    col_width = 2
     dim_holder = DimensionHolder(worksheet=map_ws)
 
     for col in range(map_ws.min_column, map_ws.max_column + 1):
@@ -375,6 +453,15 @@ def set_column_width(map_ws):
 # this function sets a color scale for range within borders of map_ws
 # colours and scales set by user above
 def set_color_scale(map_ws, area_header, area_cell_info):
+    # the following is for the color scale
+    color_start_value = 00 # percentage (between 0-100)
+    color_start_value_color = 'FFAA0000' # red
+    color_mid_value = 70 # percentage (between 0-100)
+    color_mid_value_color = 'FFAAAA00' # yellow
+    color_end_value = 100 # percentage (between 0-100)
+    color_end_value_color = 'FF00AA00' # green
+
+
     colorscale_rule = ColorScaleRule(start_type='percentile', start_value=color_start_value, start_color=color_start_value_color,
                           mid_type='percentile', mid_value=color_mid_value, mid_color=color_mid_value_color,
                           end_type='percentile', end_value=color_end_value, end_color=color_end_value_color)
@@ -398,7 +485,7 @@ def format_map_ws(map_ws, area_ws, area_header, area_cell_info):
     # set to nodata value (of area) if blank
     set_blanks_to_nodata(map_ws, area_header, area_cell_info)
 
-    if format_map == True:
+    if format_map:
         # set column width
         set_column_width(map_ws)
         # conditional format cells
@@ -430,7 +517,7 @@ def print_overlaps(overlaps_ws, overlaps):
         overlaps_ws.cell(row=row, column=col).value = cell
 
 # this function saves the sheets 'map' and 'legend' and 'overlaps' into new workbook
-def save_files(wb, save_file_name):
+def save_files(wb, save_wb_name):
     
     # save sheets into csv file
     # using code inspired by https://stackoverflow.com/a/10803229
@@ -445,15 +532,15 @@ def save_files(wb, save_file_name):
     
     # save only sheet 'map' by removing other sheets
     # code copied from https://stackoverflow.com/a/46237894
-    sheets = wb.sheetnames
-    for ws_name in sheets:
-        if (ws_name != 'map'):
-            wb.remove(wb[ws_name])
+    if format_map:
+        sheets = wb.sheetnames
+        for ws_name in sheets:
+            if (ws_name != 'map'):
+                wb.remove(wb[ws_name])
 
-    print("Now saving formatted map to workbook: " + save_file_name)
-    wb.save(save_file_name)
-    print("Everything has been saved")
-
+        print("Now saving formatted map to workbook: " + save_wb_name)
+        wb.save(save_wb_name)
+        print("Everything has been saved")
     
 
 
@@ -463,6 +550,7 @@ def save_files(wb, save_file_name):
 
 
 def main():
+
     wb = load_input_workbook()
     
     # create sheets in workbook for end result map and legend
@@ -491,7 +579,7 @@ def main():
     print_overlaps(overlaps_ws, overlaps)
 
     # save workbook
-    save_files(wb, save_file_name)
+    save_files(wb, save_wb_name)
     
     return
 
