@@ -23,21 +23,22 @@ between regions. A formatted map can also be saved if specified
 by the user.
 
 ## Files
-* regionalization.py
-* individual_region_files_example.xlsx
+* **regionalization.py**
+	* main script
+* **individual_region_files_example.xlsx**
 	* example of the input excel workbook for Canada
-* formatted_map_example.xlsx
+* **formatted_map_example.xlsx**
 	* example of the output excel workbook for Canada
 
 ## Input File
 Input file: an excel workbook with the following worksheets:
-* '[area_name]' --> one sheet
+* **'[area_name]'** --> one sheet
 	* One sheet with entire area
 	* Copy pasted .asc file of entire area
-* '[region_name]' --> multiple sheets
+* **'[region_name]'** --> multiple sheets
 	* Multiple sheets, each with one individual region
 	* Copy pasted .asc file of regions
-* 'list'
+* **'list'**
 	* OPTIONAL: alternatively, the command line can be used for this input
 	* One sheet with the list of regions and their number (region numbers in column 1, region names in column 2)
 		* Note: Region names in column 2 should match the names of their 
@@ -78,9 +79,9 @@ These are the names of the files to which the information will be saved.
 As mentioned under section ["Description"](#description), each time the 
 program runs, the regionalized map, a legend, and a list of overlaps 
 will be saved as .csv files. The default names are:
-* 'map.csv' for the regionalized map
-* 'legend.csv' for the list of region numbers and names
-* 'overlaps.csv' for the list of cells with overlaps
+* **'map.csv'** for the regionalized map
+* **'legend.csv'** for the list of region numbers and names
+* **'overlaps.csv'** for the list of cells with overlaps
 
 #### Excel Workbook File Name
 When indicated, the user can choose whether to save a formatted regionalized 
