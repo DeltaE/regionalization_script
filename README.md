@@ -1,8 +1,17 @@
 # CLEWs_regionalization
 
-This is a readme file for the regionalization repo.
+This allows regionalization **regionalization.py**
 
-In this readme file:
+**In this readme file**:
+* Input file
 * User inputs
-	* Input file
+	* Input excel file name
+	* Area name
 	* Output files
+		* CSV file names
+		* Excel workbook file name (if applicable)
+
+## Input file
+
+## User inputs
+
