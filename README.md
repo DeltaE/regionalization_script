@@ -25,10 +25,8 @@ by the user.
 ## Files
 * **regionalization.py**
 	* main script
-* **individual_region_files_example.xlsx**
+* **individual_region_files.xlsx**
 	* example of the input excel workbook for Canada
-* **formatted_map_example.xlsx**
-	* example of the output excel workbook for Canada
 
 ## Input File
 Input file: an excel workbook with the following worksheets:
@@ -94,7 +92,7 @@ asked to confirm or change this name. Note that this name must be different than
 ## Output files
 
 * .csv file for the map:
-	* the same nodata value is used for this file as the area map from the 
+	* The same nodata value is used for this file as the area map from the 
 	original input file
 * .csv file for the legend:
 	* Contains the region number and names that were used in the 
@@ -102,8 +100,9 @@ asked to confirm or change this name. Note that this name must be different than
 * .csv file for overlaps:
 	* Contains cell numbers for any cells that had an overlap of regions
 * .xlsx file for the formatted map (if applicable):
-	* formatted with a color scale (red, yellow, green)
-	* column width is set to be smaller
+	* The same content as .csv file for the map
+	* Formatted with a color scale (red, yellow, green)
+	* Column width is set to be smaller
 
 
 
