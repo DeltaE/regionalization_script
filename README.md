@@ -38,7 +38,7 @@ Input file: an excel workbook with the following worksheets:
 * **'[region_name]'** --> multiple sheets
 	* Multiple sheets, each with one individual region
 	* Copy pasted .asc file of regions
-* **'list'**
+* **'list'** --> one sheet
 	* OPTIONAL: alternatively, the command line can be used for this input
 	* One sheet with the list of regions and their number (region numbers in column 1, region names in column 2)
 		* Note: Region names in column 2 should match the names of their 
@@ -64,7 +64,7 @@ worksheet for the entire area. If no sheet by this name can be found,
 user input will be asked for again.
 
 ### Regions
-As mentioned under section ["Input File"](#input-file), there is an optional 
+As mentioned under section [Input File](#input-file), there is an optional 
 worksheet 'list'. 
 
 If this worksheet exists, then the region numbers and regions will be 
@@ -76,7 +76,7 @@ using the command line. Additionally, all regions can be
 These are the names of the files to which the information will be saved.
 
 #### CSV File Names
-As mentioned under section ["Description"](#description), each time the 
+As mentioned under section [Description](#description), each time the 
 program runs, the regionalized map, a legend, and a list of overlaps 
 will be saved as .csv files. The default names are:
 * **'map.csv'** for the regionalized map
@@ -89,7 +89,7 @@ map as an excel workbook as well. If this option is chosen, the file name
 must also be specified.
 
 The default file name is "formatted_map.xlsx", and the user will be 
-asked to confirm or change this name. Note that this name must be different than the input excel file name, mentioned under section ["Input Excel File Name"](#input-excel-file-name).
+asked to confirm or change this name. Note that this name must be different than the input excel file name, mentioned under section [Input Excel File Name](#input-excel-file-name).
 
 ## Output files
 
