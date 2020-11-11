@@ -40,7 +40,7 @@ Input file: an excel workbook with the following worksheets:
 	* Copy pasted .asc file of regions
 * **'list'** --> one sheet
 	* OPTIONAL: alternatively, the command line can be used for this input
-	* One sheet with the list of regions and their number (region numbers in column 1, region names in column 2)
+	* One sheet with the list of regions and their number (numbers in column 1, names in column 2)
 		* Note: Region names in column 2 should match the names of their 
 	corresponding excel worksheet
 
