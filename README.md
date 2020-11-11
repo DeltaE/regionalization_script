@@ -1,42 +1,46 @@
 # CLEWs_regionalization
 
-This allows regionalization **regionalization.py**
-
-**In this readme file**:
-- [Description](#description)
-- [Files](#files)
-- [Input file](#input-file)
-- [User inputs](#user-inputs)
+**Contents:**
+* [Description](#description)
+* [Files](#files)
+* [Input file](#input-file)
+* [User inputs](#user-inputs)
   * [Input excel file name](#input-excel-file-name)
   * [Area name](#area-name)
   * [Regions](#regions)
   * [Output file names](#output-file-names)
-    + [CSV file names](#csv-file-names)
-    + [Excel workbook file name (if applicable)](#excel-workbook-file-name--if-applicable-)
-- [Output files](#output-files)
+    * [CSV file names](#csv-file-names)
+    * [Excel workbook file name (if applicable)](#excel-workbook-file-name--if-applicable-)
+* [Output files](#output-files)
 
 
 ## Description
-The script **regionalization.py** takes in an excel workbook
-with information about the whole area and each individual 
-region. It then produces a regionalized map. 
+The script **regionalization.py** creates a regionalized map.
+It takes in an excel workbook with information about the whole area and each individual region to produce this map. 
 
 It saves the map, a legend, and a list of any overlaps 
 between regions. A formatted map can also be saved if specified
 by the user.
 
 ## Files
-
+* regionalization.py
+* individual_region_files_example.xlsx
+	* example of the input excel workbook for Canada
+* formatted_map_example.xlsx
+	* example of the output excel workbook for Canada
 
 ## Input file
-Input file: an excel workbook with the following files:
-* One sheet with entire area
-	* '[area_name]': Copy pasted .asc file of entire area
-* Multiple sheets with each individual region
-	* '[region_name]': Copy pasted .asc file of region
-* One sheet with the list of regions and their number
-	* 'list': Region numbers in column 1, region names in column 2 
-	* Region names in column 2 should match the names of their 
+Input file: an excel workbook with the following worksheets:
+* '[area_name]' --> one sheet
+	* One sheet with entire area
+	* Copy pasted .asc file of entire area
+* '[region_name]' --> multiple sheets
+	* Multiple sheets, each with one individual region
+	* Copy pasted .asc file of regions
+* 'list'
+	* OPTIONAL: alternatively, the command line can be used for this input
+	* One sheet with the list of regions and their number (region numbers in column 1, region names in column 2)
+		* Note: Region names in column 2 should match the names of their 
 	corresponding excel worksheet
 
 
@@ -46,17 +50,59 @@ The user will have to enter the following into the command line:
   * [Area name](#area-name)
   * [Regions](#regions)
   * [Output file names](#output-file-names)
-    + [CSV file names](#csv-file-names)
-    + [Excel workbook file name (if applicable)](#excel-workbook-file-name--if-applicable-)
+    * [CSV file names](#csv-file-names)
+    * [Excel workbook file name (if applicable)](#excel-workbook-file-name--if-applicable-)
 
 ### Input excel file name
 The default input file name is "individual_region_files.xlsx", and
-the user will be asked to confirm 
+the user will be asked to confirm or change this name.
 
 ### Area name
+Input for this area name should be the same as the name of the excel 
+worksheet for the entire area. If no sheet by this name can be found,
+user input will be asked for again.
+
 ### Regions
+As mentioned under section [input file](#input-file), there is an optional 
+worksheet 'list'. 
+
+If this worksheet exists, then the region numbers and regions will be 
+automatically taken into regions. If not, then all regions can be added
+using the command line. Additionally, all regions can be 
+**edited or deleted** before being confirmed.
+
 ### Output file names
+These are the names of the files to which the information will be saved.
+
 #### CSV file names
+As mentioned under section [description](#description), each time the 
+program runs, the regionalized map, a legend, and a list of overlaps 
+will be saved as .csv files. The default names are:
+* 'map.csv' for the regionalized map
+* 'legend.csv' for the list of region numbers and names
+* 'overlaps.csv' for the list of cells with overlaps
+
 #### Excel workbook file name (if applicable)
+When indicated, the user can choose whether to save a formatted regionalized 
+map as an excel workbook as well. If this option is chosen, the file name
+must also be specified.
+
+The default file name is "formatted_map.xlsx", and the user will be 
+asked to confirm or change this name. Note that this name must be different than the input excel file name, mentioned under section [input excel file name](#input-excel-file-name).
+
 ## Output files
+
+* .csv file for the map:
+	* the same nodata value is used for this file as the area map from the 
+	original input file
+* .csv file for the legend:
+	* Contains the region number and names that were used in the 
+	regionalization
+* .csv file for overlaps:
+	* Contains cell numbers for any cells that had an overlap of regions
+* .xlsx file for the formatted map (if applicable):
+	* formatted with a color scale (red, yellow, green)
+	* column width is set to be smaller
+
+
 
