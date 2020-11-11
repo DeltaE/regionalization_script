@@ -9,6 +9,8 @@ Input:
 Before beginning, input excel file must have the following:
     Sheet1 = "[area]"              --> ex. CAN for canada, copy paste the .asc file
     Others = "[abbreviation/name]" --> copy pasted .asc file 
+    **optional:
+    list = "list" --> list of all region numbers and names
 
 Output:
     Sheet1 = 'map'          --> regionalized map
@@ -24,7 +26,7 @@ Features
     - old and new file names cannot be the same
 
 """
-#####################################################################
+##############################################################################
 import sys
 from openpyxl import load_workbook
 from openpyxl import Workbook
@@ -35,9 +37,9 @@ import re
 from string import digits
 import csv
 
-####################################
+##############################################################################
 # ask user functions
-####################################
+##############################################################################
 
 def y_or_n(question):
     while True:
@@ -47,7 +49,8 @@ def y_or_n(question):
         elif ans in ('n', 'N'):
             return False
         else:
-            print("Your answer '" + ans + "' was invalid.", "Please choose 'y' or 'n'.")
+            print("Your answer '" + ans + "' was invalid.", 
+                    "Please choose 'y' or 'n'.")
 
 
 def answer(question):
@@ -67,12 +70,16 @@ def print_regions(regions):
     if regions == {}:
         return
     print("The following are your current regions:")
-    print("-----------------------\n","    regions:    ", "\n-----------------------")
+    print("-----------------------\n",
+            "    regions:    ", 
+            "\n-----------------------")
     print_dict(regions)
     return
 
 def print_menu(regions):
-    print("-----------------------\n","    menu:    ", "\n-----------------------")
+    print("-----------------------\n",
+            "    menu:    ", 
+            "\n-----------------------")
     print("option 1: add regions")
     print("option 2: remove regions")
     print("option 3: finished editing regions")
@@ -89,7 +96,8 @@ def choose_option(regions):
             option = int(option)
             return option
         else:
-            print("Your input '" + option + "' was invalid.", "Please choose '1', '2', or '3'.")
+            print("Your input '" + option + "' was invalid.", 
+                    "Please choose '1', '2', or '3'.")
     return
 
 def add_regions(regions):
@@ -102,7 +110,8 @@ def add_regions(regions):
             continue
         name = input("Please enter region name (must be same as excel sheet): ")
         if num in regions:
-            overwrite = y_or_n("There is already a region with that number. Would you like to overwrite it?")
+            overwrite = y_or_n("There is already a region with that number.", 
+                                "Would you like to overwrite it?")
             if not overwrite:
                 continue
 
@@ -129,7 +138,8 @@ def remove_regions(regions):
             if not finished:
                 return
         else:
-            print("Your input '" + str(num) + "' is not a region.", "Please choose again.")
+            print("Your input '" + str(num) + "' is not a region.",
+                    "Please choose again.")
     return
  
 
@@ -140,7 +150,8 @@ def sort_regions(regions, ws = None):
 
     if regions == {}:
         print("There is no sheet 'list' in workbook.")
-        print("Please either add region and region numbers manually or create a worksheet called 'list'.")
+        print("Please either add region and region numbers manually,",
+                "or create a worksheet called 'list'.")
     
     print("Use this to add or remove regions.")
     while True:
@@ -185,9 +196,10 @@ def print_explain_csv(save_csv_names):
             "'overlaps' --> all cells with overlap of regions")
     print("***Please note that this program will overwrite existing files.***")
 
-####################################
-# defining global variables
-####################################
+
+##############################################################################
+# defining variables
+##############################################################################
 
 
 def define_variable(variable_name, ws=None):
@@ -232,9 +244,11 @@ def define_variable(variable_name, ws=None):
         print("\n==================== output excel workbook name ====================")
         save_wb_name = "formatted_map.xlsx"
         print('The current input excel file name is "' + save_wb_name +'".')
-        change = y_or_n("***Please note that this program will overwrite existing files.*** \nWould you like to change the output workbook file name?")
+        change = y_or_n("***Please note that this program will overwrite existing files.***" + 
+                            "\nWould you like to change the output workbook file name?")
         if change:
-            save_wb_name = answer("Please enter output workbook filename (must be different than input name)")
+            save_wb_name = answer("Please enter output workbook filename", 
+                                    "(must be different than input name)")
         return save_wb_name
     
     else:
@@ -243,10 +257,41 @@ def define_variable(variable_name, ws=None):
 
 
 
+def define_all_variables():
 
-####################################
+    # define variables
+    xlFilename = define_variable("xlFilename")
+    wb = load_input_workbook(xlFilename)
+
+    save_csv_names = define_variable("save_csv_names")
+    format_map = y_or_n("Should the regionalized map also be formatted and saved as an excel workbook?")
+    save_wb_name = ''
+    if format_map:
+        while True:
+            save_wb_name = define_variable("save_wb_name")
+            if xlFilename == save_wb_name:
+                print('ERROR: filename to save to cannot be the same as original workbook')
+            else:
+                break
+
+    while True:
+        area_name = define_variable("area_name")
+        if area_name not in wb.sheetnames:
+            print("ERROR: No sheet with this name was found")
+        else:
+            break
+
+    if 'list' not in wb.sheetnames:
+        regions = define_variable("regions")
+    else:
+        regions = define_variable("regions", wb['list'])
+
+    return xlFilename, wb, save_csv_names, format_map, save_wb_name, area_name, regions
+
+
+##############################################################################
 # functions
-####################################
+##############################################################################
 
 def load_input_workbook(xlFilename):
     print("Now loading workbook: " + xlFilename)
@@ -535,48 +580,22 @@ def save_files(wb, save_wb_name, save_csv_names, format_map):
 
 
 
-####################################
+##############################################################################
 # global variables
-####################################
+##############################################################################
 num_extra_top_rows = 6 # the top of every asc file has 6 extra rows
 num_extra_left_cols = 1 # the left of every asc file has 1 extra column
    
 
 
-####################################
+##############################################################################
 # main script
-####################################
+##############################################################################
+
 
 
 def main():
-
-
-    # define variables
-    xlFilename = define_variable("xlFilename")
-    wb = load_input_workbook(xlFilename)
-
-    save_csv_names = define_variable("save_csv_names")
-    format_map = y_or_n("Should the regionalized map also be formatted and saved as an excel workbook?")
-    if format_map:
-        while True:
-            save_wb_name = define_variable("save_wb_name")
-            if xlFilename == save_wb_name:
-                print('ERROR: filename to save to cannot be the same as original workbook')
-            else:
-                break
-
-    while True:
-        area_name = define_variable("area_name")
-        if area_name not in wb.sheetnames:
-            print("ERROR: No sheet with this name was found")
-        else:
-            break
-
-    if 'list' not in wb.sheetnames:
-        regions = define_variable("regions")
-    else:
-        regions = define_variable("regions", wb['list'])
-    
+    xlFilename, wb, save_csv_names, format_map, save_wb_name, area_name, regions = define_all_variables()
    
     # create sheets in workbook for end result map and legend
     map_ws = wb.create_sheet("map")
