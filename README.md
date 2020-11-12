@@ -1,4 +1,4 @@
-# CLEWs_regionalization
+# regionalization_script
 
 **Contents:**
 * [Description](#description)
