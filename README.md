@@ -2,6 +2,7 @@
 
 **Contents:**
 * [Description](#description)
+* [Running the Script](#running-the-script)
 * [Files](#files)
 * [Input File](#input-file)
 * [User Inputs](#user-inputs)
@@ -21,6 +22,15 @@ It takes in an excel workbook with information about the whole area and each ind
 It saves the map, a legend, and a list of any overlaps 
 between regions. A formatted map can also be saved if specified
 by the user.
+
+
+## Running the Script
+Run script using:
+```bash
+python regionalization.py
+# or
+python3 regionalization.py
+```
 
 ## Files
 * **regionalization.py**
@@ -103,6 +113,13 @@ asked to confirm or change this name. Note that this name must be different than
 	* The same content as .csv file for the map
 	* Formatted with a color scale (red, yellow, green)
 	* Column width is set to be smaller
+
+
+
+
+
+
+
 
 
 
