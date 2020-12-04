@@ -35,6 +35,8 @@ python3 regionalization.py
 ## Files
 * **regionalization.py**
 	* main script
+* **user_inputs.py**
+	* used by 'regionalization.py' to interact with user
 * **individual_region_files.xlsx**
 	* example of the input excel workbook for Canada
 
@@ -55,12 +57,12 @@ Input file: an excel workbook with the following worksheets:
 
 ## User Inputs
 The user will have to enter the following into the command line:
-  * [Input Excel File Name](#input-excel-file-name)
-  * [Area Name](#area-name)
-  * [Regions](#regions)
-  * [Output File Names](#output-file-names)
-    * [CSV File Names](#csv-file-names)
-    * [Excel Workbook File Name](#excel-workbook-file-name)
+  * Input Excel File Name
+  * Area Name
+  * Regions
+  * Output File Names
+    * CSV File Names
+    * Excel Workbook File Name
 
 ### Input Excel File Name
 The default input file name is "individual_region_files.xlsx", and
@@ -99,7 +101,7 @@ must also be specified.
 The default file name is "formatted_map.xlsx", and the user will be 
 asked to confirm or change this name. Note that this name must be different than the input excel file name, mentioned under section [Input Excel File Name](#input-excel-file-name).
 
-## Output files
+## Output files (all in folder 'Outputs')
 
 * .csv file for the map:
 	* The same nodata value is used for this file as the area map from the 
