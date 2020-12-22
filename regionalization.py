@@ -1,4 +1,6 @@
-# mapOfRegions.py
+# regionalization.py
+# Created by Hannah Chan
+# Date: November 2020
 
 #####################################################################
 """
@@ -23,7 +25,6 @@ openpyxl is used to control excel
 """
 ##############################################################################
 import sys
-from openpyxl import load_workbook
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder

@@ -1,3 +1,7 @@
+# user_inputs.py
+# The functions in script are called on by "regionalization.py"
+# Created by Hannah Chan
+# Date: November 2020
 
 from openpyxl import load_workbook
 
@@ -5,7 +9,9 @@ from openpyxl import load_workbook
 # functions for interaction with user
 ##############################################################################
 
-
+# This function returns True if y, False if n
+# It adds (y/n) to the end of the given question to prompt
+# the user
 def y_or_n(question):
     while True:
         ans = input(question + " (y/n): ")
@@ -17,16 +23,19 @@ def y_or_n(question):
             print("Your answer '" + ans + "' was invalid.", 
                   "Please choose 'y' or 'n'.")
 
-
+# This function asks for an answer, and then if confirmed,
+# returns this answer as a string
 def answer(question):
     while True:
         ans = input(question + ": ")
-        check = input('Please confirm your answer: "' + ans + '" (y/n): ')
+        check = input("Please confirm your answer: "' + ans + '" (y/n): ")
         if check in ('y', 'Y'):
             return ans
         else:
             print("Answer was not confirmed. Please enter answer again.") 
 
+# This fucntionprints any dictionary given to 
+# it in the specifed format
 def print_dict(dc):
     for key in dc:
         print(key, ':', dc[key])
@@ -36,21 +45,21 @@ def print_regions(regions):
         return
     print("The following are your current regions:")
     print("-----------------------\n",
-            "    regions:    ", 
-            "\n-----------------------")
+          "    regions:    ", 
+          "\n-----------s------------")
     print_dict(regions)
     return
 
 def print_menu(regions):
     print("-----------------------\n",
-            "    menu:    ", 
-            "\n-----------------------")
+          "    menu:    ", 
+          "\n-----------------------")
     print("option 1: add regions")
     print("option 2: remove regions")
     print("option 3: finished editing regions")
     return
 
-
+# choose option from menu (see print_menu)
 def choose_option(regions):
     print_regions(regions)
     print_menu(regions)
@@ -62,8 +71,8 @@ def choose_option(regions):
             return option
         else:
             print("Your input '" + option + "' was invalid.", 
-                    "Please choose '1', '2', or '3'.")
-    return
+                  "Please choose '1', '2', or '3'.")
+
 
 def add_regions(regions):
     print_regions(regions)
@@ -73,10 +82,11 @@ def add_regions(regions):
         except ValueError:
             print("Your input was not an integer. Try again.")
             continue
+        
         name = input("Please enter region name (must be same as excel sheet): ")
         if num in regions:
             overwrite = y_or_n("There is already a region with that number." +  
-                                " Would you like to overwrite it?")
+                               " Would you like to overwrite it?")
             if not overwrite:
                 continue
 
@@ -85,6 +95,7 @@ def add_regions(regions):
         finished = y_or_n("Would you like to add another region?")
         if not finished:
             break
+    
     return
 
 
@@ -104,7 +115,8 @@ def remove_regions(regions):
                 return
         else:
             print("Your input '" + str(num) + "' is not a region.",
-                    "Please choose again.")
+                  "Please choose again.")
+    
     return
  
 
@@ -116,7 +128,7 @@ def sort_regions(regions, ws = None):
     if regions == {}:
         print("There is no sheet 'list' in workbook.")
         print("Please either add region and region numbers manually,",
-                "or create a worksheet called 'list'.")
+              "or create a worksheet called 'list'.")
     
     print("Use this to add or remove regions.")
     while True:
@@ -133,12 +145,13 @@ def sort_regions(regions, ws = None):
                 finished = y_or_n("Please confirm. Are all regions correct?")
                 if finished:
                     return
-                break
+                else: 
+                    break # return to choosing options
 
 def change_csv_names(save_csv_names):
     while True:
-        change = input("Which file name would you like to change?" +
-                       " ('map', 'legend', or 'overlaps'): ")
+        change = input("Which file name would you like to change? " +
+                       "('map', 'legend', or 'overlaps'): ")
         
         q_pt1 = "What would you like to change the saved file name for '"
         q_pt2 = "' to?"
@@ -156,7 +169,7 @@ def change_csv_names(save_csv_names):
         another = y_or_n("Would you like to change another filename?")
         if not another:
             return
-
+# print strings into the terminal to explain changing csv names
 def print_explain_csv(save_csv_names):
     print("In the folder 'Outputs', " + 
           "these are the csv file names that the corresponding information will be saved to:") 
@@ -176,8 +189,8 @@ def define_variable(variable_name, ws=None):
     if variable_name == "xlFilename":
         print(line_begin, "input excel file", line_end)
         xlFilename = "individual_region_files.xlsx"
-        print('In the folder "Outputs", ' + 
-              'the current input excel file name is "' + xlFilename +'".')
+        print("In the folder 'Outputs', " + 
+              "the current input excel file name is '" + xlFilename + "'.")
         change = y_or_n("Would you like to change the input file name")
         if change:
             xlFilename = answer("Please enter input excel filename")
@@ -203,9 +216,9 @@ def define_variable(variable_name, ws=None):
     elif variable_name == "save_csv_names":
         print(line_begin, "output CSV file names", line_end)
         save_csv_names = {
-            'map'       :'map.csv',
-            'legend'    :'legend.csv',
-            'overlaps'  :'overlaps.csv'
+            "map"       :"map.csv",
+            "legend"    :"legend.csv",
+            "overlaps"  :"overlaps.csv"
         }
         print_explain_csv(save_csv_names)
         change = y_or_n("Would you like to change csv names")
@@ -216,13 +229,13 @@ def define_variable(variable_name, ws=None):
     elif variable_name == "save_wb_name":
         print(line_begin, "output excel workbook name", line_end)
         save_wb_name = "formatted_map.xlsx"
-        print('In the folder "Outputs", ' + 
-              'the current input excel file name is "' + save_wb_name +'".')
+        print("In the folder 'Outputs', " + 
+              "the current input excel file name is '" + save_wb_name + "'.")
         change = y_or_n("***Please note that this program will overwrite the existing file***" + 
                         "\nWould you like to change the output workbook file name?")
         if change:
             save_wb_name = answer("Please enter output workbook filename" +  
-                                    " (must be different than input name)")
+                                  " (must be different than input name)")
         return save_wb_name
     
     else:
@@ -235,6 +248,7 @@ def load_input_workbook(xlFilename):
     print("Finished loading workbook: " + xlFilename)
     return wb
 
+# Returns all variables
 def define_all_variables():
 
     # define variables
